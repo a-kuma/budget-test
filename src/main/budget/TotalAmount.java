@@ -45,15 +45,14 @@ public class TotalAmount {
 
     public double findBetween(String startDay, String endDay) {
         LocalDate startDate = LocalDate.parse(startDay);
-        LocalDate endDate = LocalDate.parse(startDay);
+        LocalDate endDate = LocalDate.parse(endDay);
         Period period = Period.between(startDate, endDate);
         int startDayOfMonth = startDate.getDayOfMonth();
-        int endDayOfMonth = startDate.getDayOfMonth();
-        int month = period.getMonths();
+        int endDayOfMonth = endDate.getDayOfMonth();
+        int month = period.getMonths() + 1;
         if (startDayOfMonth >= endDayOfMonth) {
             month = period.getMonths() + 1;
         }
-        List<Budget> all = budgetRepo.findAll();
         List<Budget> resultBudgets = new ArrayList<>();
         LocalDate tmpStartDate = LocalDate.parse(startDay);
         for (int i = 0; i < month; i++) {
@@ -61,12 +60,16 @@ public class TotalAmount {
             if (budget != null) {
                 resultBudgets.add(budget);
             }
+            tmpStartDate = tmpStartDate.plusMonths(1);
+        }
+        if (resultBudgets.size() == 1) {
+            return (endDate.getDayOfMonth() - startDate.getDayOfMonth()) * resultBudgets.get(0).getAmount() / startDate.lengthOfMonth();
         }
         double totalAmount = 0;
         int j = 0;
         for (Budget bdt : resultBudgets) {
             j++;
-            double amount = 0;
+            double amount;
             if (j == 1) {
                 amount = (startDate.lengthOfMonth() - startDate.getDayOfMonth()) * bdt.getAmount() / startDate.lengthOfMonth();
             } else if (j == resultBudgets.size()) {
@@ -74,10 +77,10 @@ public class TotalAmount {
             } else {
                 amount = bdt.getAmount();
             }
+            totalAmount += amount;
             if (j == resultBudgets.size()) {
                 break;
             }
-            totalAmount += amount;
         }
         return totalAmount;
     }
