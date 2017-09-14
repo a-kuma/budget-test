@@ -49,9 +49,9 @@ public class TotalAmount {
         Period period = Period.between(startDate, endDate);
         int startDayOfMonth = startDate.getDayOfMonth();
         int endDayOfMonth = endDate.getDayOfMonth();
-        int month = period.getMonths() + 1;
+        int month = period.getYears() * 12 + period.getMonths() + 1;
         if (startDayOfMonth >= endDayOfMonth) {
-            month = period.getMonths() + 1;
+            month = month + 1;
         }
         List<Budget> resultBudgets = new ArrayList<>();
         LocalDate tmpStartDate = LocalDate.parse(startDay);
@@ -59,11 +59,14 @@ public class TotalAmount {
             Budget budget = getAmonut(tmpStartDate);
             if (budget != null) {
                 resultBudgets.add(budget);
+            } else {
+                Budget empty = new Budget();
+                resultBudgets.add(empty);
             }
             tmpStartDate = tmpStartDate.plusMonths(1);
         }
         if (resultBudgets.size() == 1) {
-            return (endDate.getDayOfMonth() - startDate.getDayOfMonth()) * resultBudgets.get(0).getAmount() / startDate.lengthOfMonth();
+            return (endDate.getDayOfMonth() - startDate.getDayOfMonth() + 1) * resultBudgets.get(0).getAmount() / startDate.lengthOfMonth();
         }
         double totalAmount = 0;
         int j = 0;
@@ -71,9 +74,9 @@ public class TotalAmount {
             j++;
             double amount;
             if (j == 1) {
-                amount = (startDate.lengthOfMonth() - startDate.getDayOfMonth()) * bdt.getAmount() / startDate.lengthOfMonth();
+                amount = (startDate.lengthOfMonth() - startDate.getDayOfMonth() + 1) * bdt.getAmount() / startDate.lengthOfMonth();
             } else if (j == resultBudgets.size()) {
-                amount = startDate.getDayOfMonth() * bdt.getAmount() / startDate.lengthOfMonth();
+                amount = endDate.getDayOfMonth() * bdt.getAmount() / endDate.lengthOfMonth();
             } else {
                 amount = bdt.getAmount();
             }

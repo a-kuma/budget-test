@@ -5,6 +5,9 @@ public class Budget {
     private String month;
     private double amount;
 
+    public Budget() {
+    }
+
     public Budget(String month, double amount) {
         this.month = month;
         this.amount = amount;
