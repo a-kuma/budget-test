@@ -56,9 +56,9 @@ public class TotalAmount {
         List<Budget> all = budgetRepo.findAll();
         List<Budget> resultBudgets = new ArrayList<>();
         LocalDate tmpStartDate = LocalDate.parse(startDay);
-        int i = 0;
-        for (Budget budget : all) {
-            if (getAmonut(tmpStartDate) > 0) {
+        for (int i = 0; i < month; i++) {
+            Budget budget = getAmonut(tmpStartDate);
+            if (budget != null) {
                 resultBudgets.add(budget);
             }
         }
@@ -82,15 +82,15 @@ public class TotalAmount {
         return totalAmount;
     }
 
-    private double getAmonut(LocalDate date) {
+    private Budget getAmonut(LocalDate date) {
         List<Budget> all = budgetRepo.findAll();
         for (Budget budget : all) {
             String yearmonth = date.getYear() + "" + String.format("%02d", date.getMonth().getValue());
             if (budget.getMonth().equals(yearmonth)) {
-                return budget.getAmount();
+                return budget;
             }
         }
-        return -1;
+        return null;
     }
 
 
